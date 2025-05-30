@@ -61,6 +61,14 @@ class Inventory
     
     end
 
+    def sort_by_isbn()
+        readings=read_file
+        sortBooks=readings.sort_by do |book|
+            book.split(",")[0].to_i
+        end
+        sortBooks.each { |book| puts book}
+    end
+
 end
 
 # book1= Book.new(1011,"IQ","chris")
@@ -70,34 +78,42 @@ end
 # inv.list_books
 # inv.remove_by_isbn(123)
 
-puts "----------------WELCOME-----------------------------"
-puts "choose One of these options
- 1- list all books 
- 2- add new book
- 3- remove new book"
 inv=Inventory.new
+input=""
 
-input = gets.chomp
-case input
-when "1"
-    inv.list_books
-when "2"
-    puts "Enter book details"
-    puts "Book ISBN:"
-    ISBN=gets.chomp
-    puts "Book Title"
-    title=gets.chomp
-    puts "Author Name"
-    author=gets.chomp
-    book=Book.new(ISBN,title,author)
-    inv.add_book(book)
-when "3" 
-    puts "Enter book ISBN to Remove"
-    remove_isbn=gets.chomp
-    inv.remove_by_isbn(remove_isbn)
-else
-    exit()
+until false
+    puts "----------------WELCOME-----------------------------"
+    puts "choose One of these options
+    1- list all books (NOT sorted)
+    2- add new book
+    3- remove new book
+    4- sort by ISBN" 
+
+    input = gets.chomp
+    case input
+    when "1"
+        inv.list_books
+    when "2"
+        puts "Enter book details"
+        puts "Book ISBN:"
+        ISBN=gets.chomp
+        puts "Book Title"
+        title=gets.chomp
+        puts "Author Name"
+        author=gets.chomp
+        book=Book.new(ISBN,title,author)
+        inv.add_book(book)
+    when "3" 
+        puts "Enter book ISBN to Remove"
+        remove_isbn=gets.chomp
+        inv.remove_by_isbn(remove_isbn)
+    when "4"
+        puts "sorted by ISBN"
+        inv.sort_by_isbn()
+    else
+       puts "bye bye program"
+       break
+    end
 end
-
 
 
