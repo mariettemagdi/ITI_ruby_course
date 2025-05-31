@@ -59,32 +59,37 @@ class CBABank < Bank
         #check user belong to bank or not 
         transactions.each do |transaction|
             puts transaction.value
-            info="Processing Transactions User #{transaction.user.name} transaction with value #{transaction.value}"
-            log_info(info)
-            if(!@users.include?(transaction.user))
-                message="#{transaction.user.name} not exist in the bank"
-                error_log="User #{transaction.user.name} transaction with value #{transaction.value} failed with reason #{message}"
-                log_error(error_log)
-                callback_proc.call("Failure",transaction.user.name,message)
-                raise message
-            else
-                if(transaction.user.balance + transaction.value == 0)
-                    transaction.user.balance = transaction.user.balance + transaction.value 
-                    message="#{transaction.user.name} has 0 balance"
-                    log_warning(message)
-                elsif(transaction.user.balance + transaction.value < 0)
-                    message = "User #{transaction.user.name} transaction with value #{transaction.value} Failed Not enough balance"
-                    log_error(message)
+            begin
+                info="Processing Transactions User #{transaction.user.name} transaction with value #{transaction.value}"
+                log_info(info)
+                if(!@users.include?(transaction.user))
+                    message="#{transaction.user.name} not exist in the bank"
+                    error_log="User #{transaction.user.name} transaction with value #{transaction.value} failed with reason #{message}"
+                    log_error(error_log)
                     callback_proc.call("Failure",transaction.user.name,message)
+                    raise message
                 else
-                    message="User #{transaction.user.name} with value #{transaction.value} succeeded"
-                    transaction.user.balance = transaction.user.balance + transaction.value 
-                    log_info(message)
-                    callback_proc.call("Success",transaction.user.name,message)
+                    if(transaction.user.balance + transaction.value == 0)
+                        transaction.user.balance = transaction.user.balance + transaction.value 
+                        message="#{transaction.user.name} has 0 balance"
+                        log_warning(message)
+                    elsif(transaction.user.balance + transaction.value < 0)
+                        message = "User #{transaction.user.name} transaction with value #{transaction.value} Failed Not enough balance"
+                        log_error(message)
+                        callback_proc.call("Failure",transaction.user.name,message)
+                        raise message
+                    else
+                        message="User #{transaction.user.name} with value #{transaction.value} succeeded"
+                        transaction.user.balance = transaction.user.balance + transaction.value 
+                        log_info(message)
+                        callback_proc.call("Success",transaction.user.name,message)
+                    end
                 end
-            end
+                rescue => e
+                    puts "transaction failur dure to innvalid balance or invalid user "
+                end
         end
-    end
+    end rescue e 
 end
 
 
