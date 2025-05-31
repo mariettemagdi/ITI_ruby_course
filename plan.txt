@@ -1,0 +1,32 @@
+1- logger module with 3 methods
+    log_info
+    log_warning
+    log_error
+    The logger should append the logs to a file called app.logs, each log should be in line with the following format {timestamp} -- {log_type} -- {message}
+
+    message
+    
+2- class user
+        name 
+        balance 
+3- class Transaction  
+        user
+        value 
+        both readonly
+
+4-an abstract class Bank with abstract method process_transactions
+            2 parameters (an array of transactions , a callback block ==>Proc)
+5- 
+     Bank               Loogger
+     Class              mixin (include)
+            CBABank
+
+6- a- check user includes users of bank or not 
+   b- transaction > balance -> exception and log_error
+      transaction =0 ->log_warning
+    c- callback block 
+        ok ->  callback block with a successful argument
+        exception -> callback block with a failure argument
+    All cases call log info 
+
+balance decrement each time 
