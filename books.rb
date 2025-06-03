@@ -35,13 +35,22 @@ class Inventory
         puts read_file
     end
     def add_book(book)
-        book.count=1
-        @books << "#{book.ISBN},#{book.title},#{book.author},#{book.count}"
+        @books=read_file
+        existing_book=@books.find_index{|line| line.start_with?("#{book.ISBN},")}
+        if existing_book
+            isbn, title, author, count = @books[existing_book].chomp.split(',')
+            count=count.to_i+1
+            @books[existing_book]="#{isbn},#{book.title},#{book.author},#{count}"
+            puts "Book already exists"
+        else
+            book.count=1
+            @books << "#{book.ISBN},#{book.title},#{book.author},#{book.count}"
+            puts "Book added successfully"
+        end
         # puts @books
-        File.open("books.txt", "a") do |file|
+        File.open("books.txt", "w") do |file|
             @books.each { |book| file.puts(book) }
         end
-        puts "Book added successfully"
     end
 
     def remove_by_isbn(isbn)
@@ -68,6 +77,32 @@ class Inventory
         end
         sortBooks.each { |book| puts book}
     end
+    def search_books()
+        @books=read_file
+        puts "Search by: 1-ISBN 2-title 3-Author"
+        option=gets.chomp
+
+        puts "Enter Search Term:"
+        term=gets.chomp.downcase
+
+        result= case option
+        when "1"
+            @books.select{|book| book.split(",")[0].downcase.include?(term)}
+        when "2"
+            @books.select{|book| book.split(",")[1].downcase.include?(term) }
+        when "3"
+            @books.select{|book| book.split(",")[2].downcase.include?(term)}
+        else
+            puts "Invalid Option"
+            return
+        end
+        if result.empty?
+            puts "No matching books"
+        else
+            puts "Search Results"
+            result.each {|book| puts book}
+        end
+    end
 
 end
 
@@ -87,32 +122,38 @@ until false
     1- list all books (NOT sorted)
     2- add new book
     3- remove new book
-    4- sort by ISBN" 
+    4- sort by ISBN
+    5- Seach Book
+    6- Exit"
 
     input = gets.chomp
     case input
-    when "1"
-        inv.list_books
-    when "2"
-        puts "Enter book details"
-        puts "Book ISBN:"
-        ISBN=gets.chomp
-        puts "Book Title"
-        title=gets.chomp
-        puts "Author Name"
-        author=gets.chomp
-        book=Book.new(ISBN,title,author)
-        inv.add_book(book)
-    when "3" 
-        puts "Enter book ISBN to Remove"
-        remove_isbn=gets.chomp
-        inv.remove_by_isbn(remove_isbn)
-    when "4"
-        puts "sorted by ISBN"
-        inv.sort_by_isbn()
-    else
-       puts "bye bye program"
-       break
+        when "1"
+            inv.list_books
+        when "2"
+            puts "Enter book details"
+            puts "Book ISBN:"
+            ISBN=gets.chomp
+            puts "Book Title"
+            title=gets.chomp
+            puts "Author Name"
+            author=gets.chomp
+            book=Book.new(ISBN,title,author)
+            inv.add_book(book)
+        when "3" 
+            puts "Enter book ISBN to Remove"
+            remove_isbn=gets.chomp
+            inv.remove_by_isbn(remove_isbn)
+        when "4"
+            puts "sorted by ISBN"
+            inv.sort_by_isbn()
+        when "5"
+            inv.search_books()
+        when "6"
+            puts "bye bye program"
+            break
+        else
+            puts "Invalid Option try again "
     end
 end
 
