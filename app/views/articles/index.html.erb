@@ -1,0 +1,21 @@
+<p style="color: green"><%= notice %></p>
+
+<% content_for :title, "Articles" %>
+
+<h1>Articles</h1>
+
+<div id="articles">
+  <% @articles.each do |article| %>
+    <%= render article %>
+    <% unless article.archived? %>
+      <%= link_to "Show this article", article %>
+    <% else %>
+       <p> <strong> [Archived]</strong></p>
+    <% end %>
+    <% if current_user != article.user%>
+      <%= button_to "Report Article", report_article_path(article), method: :post %>
+    <%end%>
+  <% end %>
+</div>
+
+<%= link_to "New article", new_article_path %>
